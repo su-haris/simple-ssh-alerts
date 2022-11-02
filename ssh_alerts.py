@@ -56,5 +56,5 @@ def main(ssh_ip):
     requests.get(send_message, timeout=10)
 
 
-main(ssh_ip=sys.argv[3])
+main(ssh_ip=sys.argv[2])
 # main(ssh_ip="72.14.192.0")
