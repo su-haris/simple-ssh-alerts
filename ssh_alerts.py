@@ -4,17 +4,21 @@ Just a Simple Python Telegram SSH Alert Script
 from datetime import datetime
 import os
 import sys
+import settings as env
 import requests
 import ipinfo
 
 
-TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY", "INSERT-KEY-HERE")
-TELEGRAM_CHAT_ROOM_ID = os.getenv("TELEGRAM_CHAT_ROOM_ID", "INSERT-KEY-HERE")
+TELEGRAM_API_KEY = env.TELEGRAM_API_KEY
+TELEGRAM_CHAT_ROOM_ID = env.TELEGRAM_CHAT_ROOM_ID
 
-IPINFO_KEY = os.getenv("IPINFO_KEY", "INSERT-KEY-HERE")
+IPINFO_KEY = env.IPINFO_KEY
+
+HOST_IP = os.popen("hostname -I | awk '{ print $1 }'").readlines()[0].replace("\n", "")
+HOST_NAME = os.popen("hostname").readlines()[0].replace("\n", "")
 
 
-def main(ssh_ip, host_ip):
+def main(ssh_ip):
     """The Main Function"""
 
     if IPINFO_KEY is not None:
@@ -26,7 +30,7 @@ def main(ssh_ip, host_ip):
         message_to_send = f"""
         Hey,
         We have a login from {details['ip']} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
-        Host Server: {host_ip}
+        Host Server: {HOST_IP} ({HOST_NAME})
 
         I've gone ahead and tracked the IP:
         {details['ip']}
@@ -39,7 +43,7 @@ def main(ssh_ip, host_ip):
         message_to_send = f"""
         Hey,
         We have a login from {ssh_ip} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
-        Host Server: {host_ip}
+        Host Server: {HOST_IP} ({HOST_NAME})
         """
 
     # print(message_to_send)
@@ -52,5 +56,5 @@ def main(ssh_ip, host_ip):
     requests.get(send_message, timeout=10)
 
 
-main(ssh_ip=sys.argv[3], host_ip=sys.argv[2])
-# main(ssh_ip="72.14.192.0", host_ip="localhost")
+main(ssh_ip=sys.argv[3])
+# main(ssh_ip="72.14.192.0")
