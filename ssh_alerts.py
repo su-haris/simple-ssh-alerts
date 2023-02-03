@@ -27,7 +27,7 @@ def main(ssh_ip):
     except Exception as e:
         print("Exception while trying to call API",e)
 
-    if details:
+    if details and details['status']=='success':
         message_to_send = f"""
         Hey,
         We have a login from {details['query']} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
@@ -52,5 +52,5 @@ def main(ssh_ip):
     urllib.request.urlopen(send_message)
 
 
-main(ssh_ip=sys.argv[2])
+main(ssh_ip=sys.argv[1])
 # main(ssh_ip="72.14.192.0")
