@@ -20,32 +20,35 @@ def main(ssh_ip):
     """The Main Function"""
     details = None
 
-    try:
-        details = urllib.request.urlopen(IP_API_SITE+ssh_ip)
-        details = details.read()
-        details = json.loads(details.decode("utf-8"))
-    except Exception as e:
-        print("Exception while trying to call API",e)
+    if ssh_ip!="INSTALLER_SSH":
+        try:
+            details = urllib.request.urlopen(IP_API_SITE+ssh_ip)
+            details = details.read()
+            details = json.loads(details.decode("utf-8"))
+        except Exception as e:
+            print("Exception while trying to call API",e)
 
-    if details and details['status']=='success':
-        message_to_send = f"""
-        Hey,
-        We have a login from {details['query']} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
-        Host Server: {HOST_IP} ({HOST_NAME})
+        if details and details['status']=='success':
+            message_to_send = f"""
+            Hey,
+            We have a login from {details['query']} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
+            Host Server: {HOST_IP} ({HOST_NAME})
 
-        I've gone ahead and tracked the IP:
-        {details['query']}
-        {details['city']}, {details['regionName']}, {details['country']}
-        {details['isp']} ({details['as']})
-        {details['country']}
-        """
-    else:    
-        message_to_send = f"""
-        Hey,
-        We have a login from {ssh_ip} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
-        Host Server: {HOST_IP} ({HOST_NAME})
-        """
-
+            I've gone ahead and tracked the IP:
+            {details['query']}
+            {details['city']}, {details['regionName']}, {details['country']}
+            {details['isp']} ({details['as']})
+            {details['country']}
+            """
+        else:    
+            message_to_send = f"""
+            Hey,
+            We have a login from {ssh_ip} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
+            Host Server: {HOST_IP} ({HOST_NAME})
+            """
+    else:
+        message_to_send = "Installation of simple-ssh-alerts is successful!"
+        
     message_to_send_encoded = urllib.parse.quote(message_to_send)
     send_message = f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage?chat_id={TELEGRAM_CHAT_ROOM_ID}&text={message_to_send_encoded}"
 

@@ -4,7 +4,6 @@
 # https://github.com/su-haris/simple-ssh-alerts
 
 REPO_URL="https://github.com/su-haris/simple-ssh-alerts.git"
-CURRENT_DIR=$(pwd)
 
 echo "Installing simple-ssh-alerts"
 echo -e
@@ -63,6 +62,8 @@ echo "TELEGRAM_CHAT_ROOM_ID = '$TELEGRAM_CHAT_ROOM_ID'" >> settings.py
 echo "Values written to settings.py"
 
 # Update /etc/profile to trigger script on SSH
+CURRENT_DIR=$(pwd)
+
 echo "if [ -n \"\$SSH_CLIENT\" ]; then
   python3 $CURRENT_DIR/ssh_alerts.py \$SSH_CLIENT
 fi" | cat >> /etc/profile
