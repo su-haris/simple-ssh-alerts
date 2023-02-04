@@ -17,22 +17,27 @@ HOST_NAME = os.popen("hostname").readlines()[0].replace("\n", "")
 
 IP_API_SITE = "http://ip-api.com/json/"
 
+
 def main(ssh_ip):
     """The Main Function"""
     details = None
+    current_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    current_tz = time.strftime("%Z", time.localtime())
 
-    if ssh_ip!="INSTALLER_SSH":
+    if ssh_ip == "INSTALLER_SSH":
+        message_to_send = "Installation of simple-ssh-alerts is successful!"
+    else:
         try:
-            details = urllib.request.urlopen(IP_API_SITE+ssh_ip)
+            details = urllib.request.urlopen(IP_API_SITE + ssh_ip)
             details = details.read()
             details = json.loads(details.decode("utf-8"))
         except Exception as e:
-            print("Exception while trying to call IP API",e)
+            print("Exception while trying to call IP API", e)
 
-        if details and details['status']=='success':
+        if details and details["status"] == "success":
             message_to_send = f"""
             Hey,
-            We have a login from {details['query']} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")} {time.strftime("%Z", time.localtime())}
+            We have a login from {details['query']} at {current_datetime} {current_tz}
             Host Server: {HOST_IP} ({HOST_NAME})
 
             Connection IP:
@@ -40,15 +45,13 @@ def main(ssh_ip):
             {details['city']}, {details['regionName']}, {details['country']}
             {details['isp']} ({details['as']})
             """
-        else:    
+        else:
             message_to_send = f"""
             Hey,
-            We have a login from {ssh_ip} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")} {time.strftime("%Z", time.localtime())}
+            We have a login from {ssh_ip} at {current_datetime} {current_tz}
             Host Server: {HOST_IP} ({HOST_NAME})
             """
-    else:
-        message_to_send = "Installation of simple-ssh-alerts is successful!"
-        
+
     message_to_send_encoded = urllib.parse.quote(message_to_send)
     send_message = f"https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage?chat_id={TELEGRAM_CHAT_ROOM_ID}&text={message_to_send_encoded}"
 
