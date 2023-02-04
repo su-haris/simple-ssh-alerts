@@ -2,6 +2,7 @@
 Just a Simple Python Telegram SSH Alert Script
 """
 from datetime import datetime
+import time
 import os
 import sys
 import json
@@ -26,24 +27,23 @@ def main(ssh_ip):
             details = details.read()
             details = json.loads(details.decode("utf-8"))
         except Exception as e:
-            print("Exception while trying to call API",e)
+            print("Exception while trying to call IP API",e)
 
         if details and details['status']=='success':
             message_to_send = f"""
             Hey,
-            We have a login from {details['query']} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
+            We have a login from {details['query']} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")} {time.strftime("%Z", time.localtime())}
             Host Server: {HOST_IP} ({HOST_NAME})
 
-            I've gone ahead and tracked the IP:
+            Connection IP:
             {details['query']}
             {details['city']}, {details['regionName']}, {details['country']}
             {details['isp']} ({details['as']})
-            {details['country']}
             """
         else:    
             message_to_send = f"""
             Hey,
-            We have a login from {ssh_ip} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
+            We have a login from {ssh_ip} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")} {time.strftime("%Z", time.localtime())}
             Host Server: {HOST_IP} ({HOST_NAME})
             """
     else:
