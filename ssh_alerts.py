@@ -11,6 +11,7 @@ import urllib.request, urllib.parse
 
 TELEGRAM_API_KEY = env.TELEGRAM_API_KEY
 TELEGRAM_CHAT_ROOM_ID = env.TELEGRAM_CHAT_ROOM_ID
+WHITELIST_IP = env.WHITELIST_IP
 
 HOST_IP = os.popen("hostname -I | awk '{ print $1 }'").readlines()[0].replace("\n", "")
 HOST_NAME = os.popen("hostname").readlines()[0].replace("\n", "")
@@ -27,6 +28,9 @@ def main(ssh_ip):
     if ssh_ip == "INSTALLER_SSH":
         message_to_send = "Installation of simple-ssh-alerts is successful!"
     else:
+        if ssh_ip in WHITELIST_IP:
+            exit("Whitelisted IP, not sending login alert.")
+
         try:
             details = urllib.request.urlopen(IP_API_SITE + ssh_ip)
             details = details.read()
@@ -41,9 +45,9 @@ def main(ssh_ip):
             Host Server: {HOST_IP} ({HOST_NAME})
 
             Connection IP:
-            {details['query']}
-            {details['city']}, {details['regionName']}, {details['country']}
-            {details['isp']} ({details['as']})
+            {details.get('query')}
+            {details.get('city', 'Unknown')}, {details.get('regionName', 'Unknown')}, {details.get('country','Unknown')}
+            {details.get('isp', 'Unknown ISP')} ({details.get('as', 'Unknown')})
             """
         else:
             message_to_send = f"""
