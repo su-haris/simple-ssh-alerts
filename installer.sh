@@ -47,26 +47,34 @@ git clone -q $REPO_URL
 cd simple-ssh-alerts
 
 # Ask the user to input the TELEGRAM_API_KEY
+echo -e
 echo "Enter your TELEGRAM_API_KEY: "
 read TELEGRAM_API_KEY
 
 # Ask the user to input the TELEGRAM_CHAT_ROOM_ID
+echo -e
 echo "Enter your TELEGRAM_CHAT_ROOM_ID: "
 read TELEGRAM_CHAT_ROOM_ID
 
 # Ask the user to input the WHITELIST_IP
+echo -e
 echo "[OPTIONAL] Press enter to skip"
 echo "Enter your WHITELIST_IP (separated by commas)."
-echo "Eg: 1.1.1.1, 2.2.2.2, 3.3.3.3"
 read WHITELIST_IP
+
+# Convert comma-separated values to Python list
+WHITELIST_IP=$(echo $WHITELIST_IP | sed "s/,/','/g")
+WHITELIST_IP="['"$WHITELIST_IP"']"
 
 # Write the values to the file
 echo "TELEGRAM_API_KEY = '$TELEGRAM_API_KEY'" > settings.py
 echo "TELEGRAM_CHAT_ROOM_ID = '$TELEGRAM_CHAT_ROOM_ID'" >> settings.py
-echo "WHITELIST_IP = [$WHITELIST_IP]" >> settings.py
+echo "WHITELIST_IP = $WHITELIST_IP" >> settings.py
 
 # Confirm that the values have been written to the file
+echo -e
 echo "Values written to settings.py"
+cat settings.py
 
 # Update /etc/profile to trigger script on SSH
 CURRENT_DIR=$(pwd)
@@ -78,5 +86,6 @@ fi" | cat >> /etc/profile
 # Send a test notification to Telegram to confirm installation works.
 python3 "$CURRENT_DIR/ssh_alerts.py" "INSTALLER_SSH"
 
+echo -e
 echo "Installation of simple-ssh-alert is complete."
 echo "You should have recieved a notification on Telegram if installation was successful."
