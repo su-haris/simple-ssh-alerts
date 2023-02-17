@@ -54,9 +54,16 @@ read TELEGRAM_API_KEY
 echo "Enter your TELEGRAM_CHAT_ROOM_ID: "
 read TELEGRAM_CHAT_ROOM_ID
 
+# Ask the user to input the WHITELIST_IP
+echo "[OPTIONAL] Press enter to skip"
+echo "Enter your WHITELIST_IP (separated by commas)."
+echo "Eg: 1.1.1.1, 2.2.2.2, 3.3.3.3"
+read WHITELIST_IP
+
 # Write the values to the file
 echo "TELEGRAM_API_KEY = '$TELEGRAM_API_KEY'" > settings.py
 echo "TELEGRAM_CHAT_ROOM_ID = '$TELEGRAM_CHAT_ROOM_ID'" >> settings.py
+echo "WHITELIST_IP = [$WHITELIST_IP]" >> settings.py
 
 # Confirm that the values have been written to the file
 echo "Values written to settings.py"

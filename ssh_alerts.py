@@ -30,7 +30,7 @@ def main(ssh_ip):
     else:
         if ssh_ip in WHITELIST_IP:
             exit("Whitelisted IP, not sending login alert.")
-
+            
         try:
             details = urllib.request.urlopen(IP_API_SITE + ssh_ip)
             details = details.read()
